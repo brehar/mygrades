@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>myGrades</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/js/main.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">myGrades</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <form class="form-inline add-form">
+                <div class="form-group">
+                    <label for="name">Assignment Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Spelling Test">
+                </div>
+                <div class="form-group">
+                    <label for="score">Score</label>
+                    <input type="number" class="form-control" id="score" placeholder="87" min="0" max="100" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="total">Possible Total</label>
+                    <input type="number" class="form-control" id="total" placeholder="100" min="0" max="100" step="1">
+                </div>
+                <button type="submit" class="btn btn-default">Add Assignment</button>
+            </form>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Assignment Name</th>
+                        <th>Score</th>
+                        <th>Possible Total</th>
+                        <th>Letter Grade</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody class="assignments">
+                    <% for (var i = 0; i < assignments.length; i++) { %>
+                        <tr>
+                            <td class="name"><%= assignments[i].name %></td>
+                            <td class="score"><%= assignments[i].score %></td>
+                            <td class="total"><%= assignments[i].total %></td>
+                            <% if (assignments[i].score / assignments[i].total >= .9) { %>
+                                <td class="grade">A</td>
+                            <% } else if (assignments[i].score / assignments[i].total >= .8) { %>
+                                <td class="grade">B</td>
+                            <% } else if (assignments[i].score / assignments[i].total >= .7) { %>
+                                <td class="grade">C</td>
+                            <% } else if (assignments[i].score / assignments[i].total >= .6) { %>
+                                <td class="grade">D</td>
+                            <% } else { %>
+                                <td class="grade">F</td>
+                            <% } %>
+                            <td><button type="button" data-toggle="modal" data-target="#editModal" class="btn btn-primary edit-btn" data-id="<%= assignments[i].id %>">Edit</button></td>
+                            <td><button class="btn btn-danger delete-btn" data-id="<%= assignments[i].id %>">Delete</button></td>
+                        </tr>
+                    <% } %>
+                    <tr class="template">
+                        <td class="name"></td>
+                        <td class="score"></td>
+                        <td class="total"></td>
+                        <td class="grade"></td>
+                        <td><button type="button" data-toggle="modal" data-target="#editModal" class="btn btn-primary edit-btn">Edit</button></td>
+                        <td><button class="btn btn-danger delete-btn">Delete</button></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="bold pull-right">Totals:</td>
+                        <td class="bold total-scores"><%= totalScores['Total Score'] %></td>
+                        <td class="bold total-possible"><%= totalPossible['Total Possible'] %></td>
+                        <% if (totalScores['Total Score'] / totalPossible['Total Possible'] >= .9) { %>
+                            <td class="bold total-grade">A</td>
+                        <% } else if (totalScores['Total Score'] / totalPossible['Total Possible'] >= .8) { %>
+                            <td class="bold total-grade">B</td>
+                        <% } else if (totalScores['Total Score'] / totalPossible['Total Possible'] >= .7) { %>
+                            <td class="bold total-grade">C</td>
+                        <% } else if (totalScores['Total Score'] / totalPossible['Total Possible'] >= .6) { %>
+                            <td class="bold total-grade">D</td>
+                        <% } else { %>
+                            <td class="bold total-grade">F</td>
+                        <% } %>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="editModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form class="edit-form">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Edit Assignment</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Assignment Name</label>
+                                <input type="text" class="form-control" id="edit-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="score">Score</label>
+                                <input type="number" class="form-control" id="edit-score" min="0" max="100" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="total">Possible Total</label>
+                                <input type="number" class="form-control" id="edit-total" min="0" max="100" step="1">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" id="edit-id">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Discard Changes</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
